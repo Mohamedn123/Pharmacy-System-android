@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Home"
+        android:icon="@drawable/ic_insert_chart_black_24dp"
+        android:title="Insights"
+        />
+    <item
+        android:id="@+id/Orders"
+        android:icon="@drawable/ic_directions_bike_black_24dp"
+        android:title="Orders"
+        />
+    <item
+        android:id="@+id/Product"
+        android:icon="@drawable/product"
+        android:title="Products"
+        />
+    <item
+        android:id="@+id/Users"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Users"
+        />
+    <item
+        android:id="@+id/Profile"
+        android:icon="@drawable/ic_person_pin_black_24dp"
+        android:title="Profile"
+        />
+
+</menu>
