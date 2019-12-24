@@ -52,6 +52,11 @@ public class EditProfile extends AppCompatActivity {
                     }
                 });
             }
+
+            @Override
+            public void GetUserPrivilege(long Privilege) {
+
+            }
         });
 
 

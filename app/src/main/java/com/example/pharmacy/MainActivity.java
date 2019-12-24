@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
             public void onGetUserWithID(Person person) {
 
             }
+
+            @Override
+            public void GetUserPrivilege(long Privilege) {
+
+            }
         });
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();

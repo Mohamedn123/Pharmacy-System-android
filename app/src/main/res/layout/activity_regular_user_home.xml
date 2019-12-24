@@ -10,6 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/regular_user"/>
+        app:menu="@menu/regular_user"
+        android:id="@+id/RegularUserBottomNavigation"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/RegualerUserFragment"
+        android:layout_above="@+id/RegularUserBottomNavigation"/>
 
 </RelativeLayout>

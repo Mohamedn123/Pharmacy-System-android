@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pharmacy.R;
+import com.example.pharmacy.Users.Person;
 import com.example.pharmacy.ViewProductAdmin;
+import com.example.pharmacy.ViewProductUser;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -91,10 +95,36 @@ public class product_adapter extends RecyclerView.Adapter<product_adapter.MyView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int Position = getAdapterPosition();
-                    Intent intent = new Intent(context , ViewProductAdmin.class);
-                    intent.putExtra("ProductID" , productArrayList.get(Position).getID());
-                    context.startActivity(intent);
+                    final int Position = getAdapterPosition();
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                    Person person = new Person();
+                    person.GetUserPrivilege(firebaseAuth.getUid(), new com.example.pharmacy.Users.FirebaseFinish() {
+                        @Override
+                        public void onGetAllUsers(ArrayList<Person> personArrayList) {
+
+                        }
+
+                        @Override
+                        public void onGetUserWithID(Person person) {
+
+                        }
+
+                        @Override
+                        public void GetUserPrivilege(long Privilege) {
+                            if (Privilege == 0){
+                                Log.d("User Privilege" , Privilege+"");
+                                Intent intent = new Intent(context , ViewProductUser.class);
+                                intent.putExtra("ProductID" , productArrayList.get(Position).getID());
+                                context.startActivity(intent);
+                            }
+                            else if (Privilege == 1){
+                                Intent intent = new Intent(context , ViewProductAdmin.class);
+                                intent.putExtra("ProductID" , productArrayList.get(Position).getID());
+                                context.startActivity(intent);
+                            }
+                        }
+                    });
+
                 }
             });
 

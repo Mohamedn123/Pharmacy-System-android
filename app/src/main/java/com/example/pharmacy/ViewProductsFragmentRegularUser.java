@@ -1,0 +1,71 @@
+package com.example.pharmacy;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.pharmacy.Product.Category;
+import com.example.pharmacy.Product.FirebaseFinish;
+import com.example.pharmacy.Product.Product;
+import com.example.pharmacy.Product.product_adapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+
+public class ViewProductsFragmentRegularUser extends Fragment {
+    RecyclerView ProductRecyclerView;
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_view_prodcuts_regular_user, null);
+        ProductRecyclerView = root.findViewById(R.id.ProductsRecyclerView);
+        final Product product = new Product();
+        product.GetAllProducts(root.getContext(), new FirebaseFinish() {
+            @Override
+            public void GetAllCategories(ArrayList<Category> Categories) {
+
+            }
+
+            @Override
+            public void FinishUploading(String ImagePath) {
+
+            }
+
+            @Override
+            public void GetAllProducts(ArrayList<Product> productArrayList) {
+                ArrayList<String> ImagePaths = new ArrayList<String>();
+                ProductRecyclerView.setLayoutManager(new LinearLayoutManager(root.getContext()));
+                product_adapter productAdapter = new product_adapter(productArrayList , root.getContext());
+                ProductRecyclerView.setAdapter(productAdapter);
+
+            }
+
+            @Override
+            public void FinishDownloadingImage(Uri image) {
+
+            }
+
+            @Override
+            public void GetProductByID(Product product) {
+
+            }
+
+            @Override
+            public void GetCategoryByID(Category category) {
+
+            }
+        });
+
+
+        return root;
+    }
+}

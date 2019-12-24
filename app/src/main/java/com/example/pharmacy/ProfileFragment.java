@@ -76,6 +76,11 @@ public class ProfileFragment extends Fragment {
                 });
 
             }
+
+            @Override
+            public void GetUserPrivilege(long Privilege) {
+
+            }
         });
         return view;
     }

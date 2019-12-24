@@ -40,6 +40,11 @@ public class UsersFragment extends Fragment {
             public void onGetUserWithID(Person person) {
 
             }
+
+            @Override
+            public void GetUserPrivilege(long Privilege) {
+
+            }
         });
         return view;
     }

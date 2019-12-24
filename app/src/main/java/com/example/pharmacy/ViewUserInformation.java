@@ -107,6 +107,11 @@ public class ViewUserInformation extends AppCompatActivity {
                 });
 
             }
+
+            @Override
+            public void GetUserPrivilege(long Privilege) {
+
+            }
         });
 
 

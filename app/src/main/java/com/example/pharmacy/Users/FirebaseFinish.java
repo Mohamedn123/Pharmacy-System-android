@@ -5,5 +5,6 @@ import java.util.ArrayList;
 public interface FirebaseFinish {
     void onGetAllUsers(ArrayList<Person> personArrayList);
     void onGetUserWithID(Person person);
+    void GetUserPrivilege (long Privilege);
 
 }

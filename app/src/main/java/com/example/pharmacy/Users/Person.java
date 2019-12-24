@@ -316,6 +316,19 @@ public class Person {
         progressDialog.dismiss();
     }
 
+    public void GetUserPrivilege(String ID , final FirebaseFinish finish){
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Users").document(ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    finish.GetUserPrivilege((Long) documentSnapshot.get("Privilege"));
+                }
+            }
+        });
+    }
+
 
 
 }

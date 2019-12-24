@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewProductAdmin"></activity>
+        <activity android:name=".ViewProductUser"></activity>
+        <activity android:name=".ViewProductAdmin" />
         <activity android:name=".EditProfile" />
         <activity android:name=".ViewUserInformation" />
         <activity android:name=".AddProduct" />
