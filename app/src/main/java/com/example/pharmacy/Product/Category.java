@@ -88,4 +88,23 @@ public class Category {
 
     }
 
+    public void GetNameByID (Context context , final String ID , final FirebaseFinish finish){
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Loading Product Details");
+        progressDialog.show();
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Category").document(ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    Category category = new Category(ID ,(String) documentSnapshot.get("Name"));
+                    finish.GetCategoryByID(category);
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
+
 }

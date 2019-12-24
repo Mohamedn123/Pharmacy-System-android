@@ -1,6 +1,7 @@
 package com.example.pharmacy.Product;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pharmacy.R;
+import com.example.pharmacy.ViewProductAdmin;
 
 import java.util.ArrayList;
 
@@ -60,6 +62,16 @@ public class product_adapter extends RecyclerView.Adapter<product_adapter.MyView
                 Glide.with(context).load(image.toString()).into(holder.imageView);
 
             }
+
+            @Override
+            public void GetProductByID(Product product) {
+
+            }
+
+            @Override
+            public void GetCategoryByID(Category category) {
+
+            }
         });
     }
 
@@ -72,10 +84,19 @@ public class product_adapter extends RecyclerView.Adapter<product_adapter.MyView
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
         ImageView imageView;
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder(@NonNull final View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.ProductName);
             imageView = itemView.findViewById(R.id.ProductImage);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int Position = getAdapterPosition();
+                    Intent intent = new Intent(context , ViewProductAdmin.class);
+                    intent.putExtra("ProductID" , productArrayList.get(Position).getID());
+                    context.startActivity(intent);
+                }
+            });
 
         }
     }

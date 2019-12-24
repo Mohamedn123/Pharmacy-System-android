@@ -9,4 +9,6 @@ public interface FirebaseFinish {
     void FinishUploading(String ImagePath);
     void GetAllProducts(ArrayList<Product> productArrayList);
     void FinishDownloadingImage (Uri image);
+    void GetProductByID(Product product);
+    void GetCategoryByID(Category category);
 }

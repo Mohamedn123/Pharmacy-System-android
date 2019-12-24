@@ -71,6 +71,16 @@ public class ViewProductsFragment extends Fragment {
             public void FinishDownloadingImage(Uri image) {
 
             }
+
+            @Override
+            public void GetProductByID(Product product) {
+
+            }
+
+            @Override
+            public void GetCategoryByID(Category category) {
+
+            }
         });
 
 

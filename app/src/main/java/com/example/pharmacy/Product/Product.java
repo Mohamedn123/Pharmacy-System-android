@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -20,7 +21,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -135,6 +135,16 @@ public class Product {
             public void FinishDownloadingImage(Uri image) {
 
             }
+
+            @Override
+            public void GetProductByID(Product product) {
+
+            }
+
+            @Override
+            public void GetCategoryByID(com.example.pharmacy.Product.Category category) {
+
+            }
         });
 
 
@@ -193,6 +203,29 @@ public class Product {
 
     }
 
+    public void GetProductByID(Context context , String ID , final FirebaseFinish finish){
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Getting Product Info");
+        progressDialog.show();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Products").document(ID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                String ID = (String) documentSnapshot.getId();
+                String ProductName = (String) documentSnapshot.get("Name");
+                double Price = (double) documentSnapshot.get("Price");
+                final int quantity = (int) (long) documentSnapshot.get("Quantity");
+                String ImagePath = (String) documentSnapshot.get("Image");
+                final String category = (String) documentSnapshot.get("Category");
+                Product product = new Product(ID , ProductName , ImagePath , category , quantity , Price);
+                finish.GetProductByID(product);
+                progressDialog.dismiss();
+
+            }
+        });
+    }
+
     public void DownloadImage(String ImagePath , final FirebaseFinish finish){
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference().child(ImagePath);
@@ -206,41 +239,41 @@ public class Product {
 
 
     }
-//    public ArrayList<Product> SelectAll(){
-//        String SQL = "SELECT * FROM Product";
-//        final String link = "http://10.0.2.2:8080/Pharmacy/AndroidWebservice.php?sql="+SQL;
-//        final ArrayList<Product> ProductList = new ArrayList<Product>();
-//        Thread thread1 = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                OkHttpClient client = new OkHttpClient();
-//                Request request = new Request.Builder().url(link).build();
-//                try{
-//                    Response response = client.newCall(request).execute();
-//                    String Data = response.body().string();
-//                    JSONArray jsonArray = new JSONArray(Data);
-//                    for (int x=0;x<jsonArray.length();x++){
-//                        JSONObject jsonObject = (JSONObject) jsonArray.get(x);
-//                        byte[] image = jsonObject.getString("Image").getBytes("UTF-8");
-//                        Log.d("Image" , String.valueOf(Base64.decode(jsonObject.getString("Image") , Base64.DEFAULT)));
-//                        ProductList.add(new Product(Integer.parseInt(jsonObject.getString("ID")) , jsonObject.getString("Name") , jsonObject.getString("Image"), Integer.parseInt(jsonObject.getString("Category_ID")) , Integer.parseInt(jsonObject.getString("Quantity")) , Double.parseDouble(jsonObject.getString("Price"))));
-//
-//                    }
-//
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        thread1.start();
-//        try {
-//            thread1.join();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return ProductList;
-//    }
+
+    public void DeleteProduct(String ID , final Context context){
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Deleting Product");
+        progressDialog.show();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Products").document(ID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(context , "Product Deleted Successfully" , Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                }
+                else {
+                    Toast.makeText(context , "There was a problem Deleting Product" , Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
+
+    public void DeleteImage(String ImagePath , final Context context){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child(ImagePath);
+        storageReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+
+                }
+                else{
+                    Toast.makeText(context , "There was a problem Removing all the Product Data" , Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
 }
