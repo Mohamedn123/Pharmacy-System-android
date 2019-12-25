@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/loading"
+        android:layout_margin="20dp"
+        android:id="@+id/cart_Product_Image"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/cart_Product_Image"
+        android:layout_margin="20dp"
+        android:text="Product Name"
+        android:textSize="20sp"
+        android:id="@+id/cart_Product_Name"
+        />
+    <TextView
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/cart_Product_Image"
+        android:text="Product Quantity"
+        android:textSize="20sp"
+        android:layout_below="@+id/cart_Product_Name"
+        android:id="@+id/cart_product_Quantity"
+        />
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_toRightOf="@+id/cart_Product_Name"
+        android:layout_margin="20dp"
+        android:background="@drawable/ic_delete_black_24dp"
+        android:id="@+id/cart_product_delete"/>
+
+</RelativeLayout>

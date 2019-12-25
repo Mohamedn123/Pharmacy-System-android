@@ -32,6 +32,9 @@ public class RegularUserHome extends AppCompatActivity {
                     case R.id.Profile:
                         getSupportFragmentManager().beginTransaction().replace(R.id.RegualerUserFragment , new ProfileFragment()).commit();
                         break;
+                    case R.id.Cart:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.RegualerUserFragment , new CartFragment()).commit();
+                        break;
                 }
                 return true;
             }

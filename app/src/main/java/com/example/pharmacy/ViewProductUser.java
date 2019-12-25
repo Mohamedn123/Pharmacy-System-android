@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.pharmacy.Product.Category;
 import com.example.pharmacy.Product.FirebaseFinish;
 import com.example.pharmacy.Product.Product;
+import com.example.pharmacy.Users.Person;
 
 import java.util.ArrayList;
 
@@ -130,7 +131,8 @@ public class ViewProductUser extends AppCompatActivity {
                 AddTocart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Person person = new Person();
+                        person.AddTocart(product.getID() ,1 ,product.getPrice() ,ViewProductUser.this);
                     }
                 });
 

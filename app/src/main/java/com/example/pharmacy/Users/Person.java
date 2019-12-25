@@ -13,10 +13,12 @@ import com.example.pharmacy.AdminHome;
 import com.example.pharmacy.MainActivity;
 import com.example.pharmacy.RegularUserHome;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -328,7 +330,242 @@ public class Person {
             }
         });
     }
+    public void GetCartByUserID(final CartFirebaseFinish finish){
+        final boolean[] found = {false};
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
+                        if ((long) queryDocumentSnapshot.get("Status") == 0){
+                            found[0] = true;
+                            finish.GetCartID(queryDocumentSnapshot.getId());
+                            return;
+                        }
+                    }
+                    if (found[0]){
+
+                    }
+                    else{
+                        finish.GetCartID(null);
+                    }
+                }
+            }
+        });
+    }
+    public void MakeNewCart(final CartFirebaseFinish finish){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        Map<String , Object> map = new HashMap<>();
+        map.put("TotalPrice" , 0);
+        map.put("Status" , 0);
+        firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                finish.AddNewCart(documentReference.getId());
+            }
+        });
+    }
+
+    public void AddTocart(String ProductID , long Quantity , double Price , final Context context){
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final Map<String , Object> map = new HashMap<>();
+        map.put("ProductID" , ProductID);
+        map.put("Quantity" , Quantity);
+        final double TotalPrice = Quantity * Price;
+        map.put("TotalPrice" , TotalPrice);
+        GetCartByUserID(new CartFirebaseFinish() {
+            @Override
+            public void GetCartID(final String ID) {
+                if (ID == null){
+                    MakeNewCart(new CartFirebaseFinish() {
+                        @Override
+                        public void GetCartID(String ID) {
+
+                        }
+
+                        @Override
+                        public void AddNewCart(final String CartID) {
+                            firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").document(CartID).collection("ItemsCollection").document().set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        Toast.makeText(context , "Item added to Your Cart Successfully" , Toast.LENGTH_LONG).show();
+                                        UpdateCart(CartID , TotalPrice , 0);
+                                    }
+                                    else{
+                                        Toast.makeText(context , "There was a Problem adding items to your Cart" , Toast.LENGTH_LONG).show();
+
+                                    }
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void GetTotalPrice(double Price) {
+
+                        }
+
+                        @Override
+                        public void GetAllCartItems(ArrayList<CartItems> CartItems) {
+
+                        }
+                    });
+
+                }
+                else{
+                    firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").document(ID).collection("ItemsCollection").document().set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Toast.makeText(context , "Item added to Your Cart Successfully" , Toast.LENGTH_LONG).show();
+                                UpdateCart(ID , TotalPrice , 0);
+                            }
+                            else{
+                                Toast.makeText(context , "There was a Problem adding items to your Cart" , Toast.LENGTH_LONG).show();
+
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void AddNewCart(String CartID) {
+
+            }
+
+            @Override
+            public void GetTotalPrice(double Price) {
+
+            }
+
+            @Override
+            public void GetAllCartItems(ArrayList<CartItems> CartItems) {
+
+            }
+        });
+    }
+    public void RetrieveTotalPrice(String CartID , final CartFirebaseFinish finish){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").document(CartID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    try{
+                        finish.GetTotalPrice((double)(Long) task.getResult().get("TotalPrice"));
+
+                    }
+                    catch (Exception e){
+                        finish.GetTotalPrice((double) task.getResult().get("TotalPrice"));
+
+                    }
+                }
+            }
+        });
+    }
+    public void UpdateCart(final String CartID , final double Price2 , long Status){
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        RetrieveTotalPrice(CartID, new CartFirebaseFinish() {
+            @Override
+            public void GetCartID(String ID) {
+
+            }
+
+            @Override
+            public void AddNewCart(String CartID) {
+
+            }
+
+            @Override
+            public void GetTotalPrice(double Price) {
+                Map<String , Object> TotalPrice = new HashMap<>();
+                TotalPrice.put("TotalPrice" , Price + Price2);
+                firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").document(CartID).update(TotalPrice).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("Updated Total Price" , "Total Price Updates");
+                    }
+                });
+
+            }
+
+            @Override
+            public void GetAllCartItems(ArrayList<CartItems> CartItems) {
+
+            }
+        });
+    }
+
+    public void GetAllCartItems(final CartFirebaseFinish finish){
+        final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        GetCartByUserID(new CartFirebaseFinish() {
+            @Override
+            public void GetCartID(final String ID) {
+                if (ID == null){
+                    finish.GetAllCartItems(null);
+                }
+                else{
+                    final ArrayList<CartItems> CartItems = new ArrayList<CartItems>();
+                    firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").document(ID).collection("ItemsCollection").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()){
+                                for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                                    CartItems.add(new CartItems(ID , documentSnapshot.getId() , (String) documentSnapshot.get("ProductID") , (long) documentSnapshot.get("Quantity")
+                                    , (double) documentSnapshot.get("TotalPrice")));
+                                }
+                                finish.GetAllCartItems(CartItems);
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void AddNewCart(String CartID) {
+
+            }
+
+            @Override
+            public void GetTotalPrice(double Price) {
+
+            }
+
+            @Override
+            public void GetAllCartItems(ArrayList<CartItems> CartItems) {
+
+            }
+        });
+    }
+
+    public void DeleteItemFromCart(String CartID , String ItemID , final Context context){
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Carts").document(firebaseAuth.getUid()).collection("CartsCollection").
+                document(CartID).collection("ItemsCollection").document(ItemID).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(context , "Item Removed Successfully" , Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(context , "There was a problem Removing Your item" , Toast.LENGTH_LONG).show();
+
+                }
+            }
+        });
+
+    }
+
 
 
 
 }
+
